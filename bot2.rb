@@ -27,6 +27,11 @@ bot = Cinch::Bot.new do
   on :message, /tirate un gif/ do |m, query|
     m.reply gifs
   end
+
+  on :message, /tirate un gato/ do |m|
+    m.reply "http://procatinator.com/?cat=#{rand(111)+1}"
+  end
+
   on :message, /faso|verde|porro|droga|humo|churro|fino|tuca|canio/i do |m, query|
     m.reply "#{m.user.nick} esta hablando del faso!!!!"
   end
