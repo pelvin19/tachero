@@ -32,7 +32,7 @@ bot = Cinch::Bot.new do
     m.reply "http://procatinator.com/?cat=#{rand(111)+1}"
   end
 
-  on :message, /faso|verde|porro|droga|humo|churro|fino|tuca|canio/i do |m, query|
+  on :message, /faso|verde|porro|droga|humo|churro|fino|tuca|canio|fasito|tuquita/i do |m, query|
     m.reply "#{m.user.nick} esta hablando del faso!!!!"
   end
   on :message, "hola (.+)" do |m|
