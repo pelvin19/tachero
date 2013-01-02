@@ -21,6 +21,16 @@ bot = Cinch::Bot.new do
       return link
     end
 
+   #Returns a public TrendNET CAM for fun (bug exploit).
+   def webcam()
+     res  = HTTParty.get('http://pastebin.com/raw.php?i=DtCL8Nvm')
+     webcams = []
+     res.body.each_line do |line|
+       if line.match(/http/) then webcams << line end
+     end
+     webcams[rand(webcams.length)]
+   end
+
     #Retuns a greeting message according to the current time
     def greeting_message()
       greeting_message = case Time.now.hour
@@ -41,6 +51,9 @@ bot = Cinch::Bot.new do
   end
   on :message, /tirate un gato/ do |m|
     m.reply "http://procatinator.com/?cat=#{rand(1000)+1}"
+  end
+  on :message, /tirate una webcam/ do |m|
+    m.reply webcam
   end
   on :message, /faso|verde|porro|droga|humo|churro|fino|tuca|canio|fasito|tuquita/i do |m, query|
     m.reply "#{m.user.nick} esta hablando del faso!!!!"
