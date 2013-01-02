@@ -20,6 +20,14 @@ bot = Cinch::Bot.new do
 
       return link
     end
+    
+    def comics()
+      url = "http://www.explosm.net/comics/random/"
+      res = Hpricot.parse(HTTParty.get(url))
+      link = (res/"div#maincontent div img").select{|img| img.attributes['src'].match(/http:\/\/www.explosm.net\/db\/files\/Comics/)}.first
+      
+      return link.attributes['src']
+    end
 
    #Returns a public TrendNET CAM for fun (bug exploit).
    def webcam()
@@ -40,11 +48,17 @@ bot = Cinch::Bot.new do
       end
     end
 
-  end
+end
 
   on :message, "donde comemos?" do |m|
     places = ["pompeyo","cuartetas","sotano","333","mc","guerrin!!","pizza barata","bk"]
     m.reply places[rand(places.length)]
+  end
+  on :message, /tirate un comic/ do |m|
+    m.reply comics
+  end
+  on :message, /productividad al mango/ do |m|
+    m.reply comics + "/n" + gifs + "/n" + "http://procatinator.com/?cat=#{rand(1000)+1}"
   end
   on :message, /tirate un gif/ do |m, query|
     m.reply gifs
@@ -67,7 +81,7 @@ bot = Cinch::Bot.new do
   on :join do |m|
      greet = greeting_message
      m.reply "#{greeting_message} #{m.user.nick}, todo piola?" unless m.user.nick=="el_tachero"
-  end
+ end
 
 end
 
