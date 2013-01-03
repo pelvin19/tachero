@@ -1,6 +1,7 @@
 require 'cinch'
 require 'hpricot'
 require 'httparty'
+require_relative 'plugins/lunch'
 
 bot = Cinch::Bot.new do
 
@@ -8,6 +9,7 @@ bot = Cinch::Bot.new do
     c.nick = "el_tachero"
     c.server = "irc.freenode.org"
     c.channels = ["#despega"]
+    c.plugins.plugins = [LunchVote]
   end
 
   helpers do
@@ -16,28 +18,32 @@ bot = Cinch::Bot.new do
     def gifs()
       url = "http://4gifs.tumblr.com/page/#{rand(900)+1}"
       res = Hpricot.parse(HTTParty.get(url))
-      link = (res/"div#content div.post a img")[0].attributes['src']
+      links = (res/"div#content div.post div.media a img")
 
-      return link
+      return links[rand(links.length)].attributes['src']
     end
     
     def comics()
       url = "http://www.explosm.net/comics/random/"
       res = Hpricot.parse(HTTParty.get(url))
       link = (res/"div#maincontent div img").select{|img| img.attributes['src'].match(/http:\/\/www.explosm.net\/db\/files\/Comics/)}.first
-      
-      return link.attributes['src']
+      if link
+        return link.attributes['src']
+      else
+        puts (res/"div#maincontent div img").collect{|img| img.attributes['src']}
+        return "http://www.explosm.net/db/files/Comics/Matt/Open-my-window-and-a-breeze-rolls-in.png"
+      end  
     end
 
-   #Returns a public TrendNET CAM for fun (bug exploit).
-   def webcam()
-     res  = HTTParty.get('http://pastebin.com/raw.php?i=DtCL8Nvm')
-     webcams = []
-     res.body.each_line do |line|
-       if line.match(/http/) then webcams << line end
-     end
-     webcams[rand(webcams.length)]
-   end
+    #Returns a public TrendNET CAM for fun (bug exploit).
+    def webcam()
+      res  = HTTParty.get('http://pastebin.com/raw.php?i=DtCL8Nvm')
+      webcams = []
+      res.body.each_line do |line|
+        if line.match(/http/) then webcams << line end
+      end
+      webcams[rand(webcams.length)]
+    end
 
     #Retuns a greeting message according to the current time
     def greeting_message()
@@ -47,8 +53,7 @@ bot = Cinch::Bot.new do
         else "Buenas noches"
       end
     end
-
-end
+  end
 
   on :message, "donde comemos?" do |m|
     places = ["pompeyo","cuartetas","sotano","333","mc","guerrin!!","pizza barata","bk"]
@@ -58,7 +63,7 @@ end
     m.reply comics
   end
   on :message, /productividad al mango/ do |m|
-    m.reply comics + "/n" + gifs + "/n" + "http://procatinator.com/?cat=#{rand(1000)+1}"
+    m.reply comics + "\n" + gifs + "\n" + "http://procatinator.com/?cat=#{rand(1000)+1}" + "\n" + webcam
   end
   on :message, /tirate un gif/ do |m, query|
     m.reply gifs
@@ -81,7 +86,7 @@ end
   on :join do |m|
      greet = greeting_message
      m.reply "#{greeting_message} #{m.user.nick}, todo piola?" unless m.user.nick=="el_tachero"
- end
+  end
 
 end
 
