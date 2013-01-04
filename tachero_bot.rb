@@ -23,6 +23,14 @@ bot = Cinch::Bot.new do
       return links[rand(links.length)].attributes['src']
     end
     
+    def feriado()
+      url = "http://esferiadohoy.com/"
+      res = Hpricot.parse(HTTParty.get(url))
+      holiday = (res/"div#feriado").text + " Faltan " + (res/"span#numero").text + " dias. " + (res/"div#motivo").text + ". " + (res/"div#largo var").text
+      
+      return holiday
+    end
+    
     def comics()
       url = "http://www.explosm.net/comics/random/"
       res = Hpricot.parse(HTTParty.get(url))
@@ -59,8 +67,14 @@ bot = Cinch::Bot.new do
     places = ["pompeyo","cuartetas","sotano","333","mc","guerrin!!","pizza barata","bk"]
     m.reply places[rand(places.length)]
   end
+  on :message, /cuando es el proximo feriado?/ do |m|
+    m.reply feriado
+  end
   on :message, /tirate un comic/ do |m|
     m.reply comics
+  end
+  on :message, /saber es poder/ do |m|
+    m.reply "http://es.wikipedia.org/wiki/Especial:Aleatoria"
   end
   on :message, /productividad al mango/ do |m|
     m.reply comics + "\n" + gifs + "\n" + "http://procatinator.com/?cat=#{rand(1000)+1}" + "\n" + webcam
@@ -70,6 +84,14 @@ bot = Cinch::Bot.new do
   end
   on :message, /tirate un gato/ do |m|
     m.reply "http://procatinator.com/?cat=#{rand(1000)+1}"
+  end
+  on :message, /thetime/ do |m|
+    m.reply Time.now.strftime("%H:%M")
+  end
+  on :message, /timeleft/ do |m|
+    timeleft_hora = (Time.parse("18:00") - Time.now) / 60 / 60
+    timeleft_minuto = (Time.parse("18:00") - Time.now) / 60
+    m.reply "quedan #{timeleft_hora.to_i} horas con #{timeleft_minuto.to_i} minutos"
   end
   on :message, /tirate una webcam/ do |m|
     m.reply webcam
