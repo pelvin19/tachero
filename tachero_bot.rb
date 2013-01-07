@@ -90,7 +90,7 @@ bot = Cinch::Bot.new do
   end
   on :message, /timeleft/ do |m|
     timeleft_hora = (Time.parse("18:00") - Time.now) / 60 / 60
-    timeleft_minuto = (Time.parse("18:00") - Time.now) / 60
+    timeleft_minuto = ((Time.parse("18:00") - Time.now) / 60) - timeleft_hora * 60
     m.reply "quedan #{timeleft_hora.to_i} horas con #{timeleft_minuto.to_i} minutos"
   end
   on :message, /tirate una webcam/ do |m|
